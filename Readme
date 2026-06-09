@@ -1,0 +1,221 @@
+🛍️ Retail Sales Analysis Using SQL
+📌 Project Overview
+
+This project analyzes retail sales data using SQL to uncover valuable business insights related to customer behavior, sales performance, product categories, and revenue contribution.
+
+The dataset contains transaction-level sales information, including:
+
+Transaction ID
+Sale Date & Time
+Customer ID
+Gender
+Age
+Product Category
+Quantity Sold
+Price Per Unit
+Cost of Goods Sold (COGS)
+Total Sale Amount
+
+The project demonstrates practical SQL skills including:
+
+Data Cleaning
+Data Exploration
+Aggregations
+Grouping & Filtering
+Window Functions
+Ranking
+Business KPI Analysis
+Customer Segmentation
+
+🎯 Business Problems Solved
+1. Which product category generates the highest sales revenue?
+
+Objective: Identify the most profitable product category and understand which category contributes the most revenue to the business.
+
+2. Which gender contributes the highest number of purchases?
+
+Objective: Analyze customer purchasing behavior by gender and identify the most active customer segment.
+
+3. What percentage of total sales is contributed by each product category?
+
+Objective: Measure the revenue contribution of each category to understand business dependence on specific product segments.
+
+4. Which month performs best in terms of average sales?
+
+Objective: Identify seasonal trends and determine the best-performing month in each year.
+
+5. Who are the top 5 customers based on total spending?
+
+Objective: Identify high-value customers for loyalty programs and targeted marketing campaigns.
+
+6. Which sales shift generates the highest number of orders?
+
+Objective: Analyze sales activity during:
+
+Morning
+Afternoon
+Evening
+
+to optimize staffing and operations.
+
+7. Which category has the highest number of unique customers?
+
+Objective: Determine which product category attracts the largest customer base.
+
+8. How many transactions occur by gender and category?
+
+Objective: Understand customer preferences across different product categories.
+
+
+Data Cleaning Process
+
+Before performing analysis:
+
+Checked total records
+Identified NULL values
+Removed incomplete records
+Verified unique customers
+Reviewed available product categories
+
+📊 SQL Analysis Questions & Solutions
+Q1. Retrieve all sales made on a specific date
+
+SELECT *
+FROM Retail_Sales
+WHERE sale_date = '2022-11-05';
+
+
+Q2. Find Clothing transactions in November 2022
+
+Business Question: Which Clothing products were sold during November 2022?
+
+SELECT *
+FROM Retail_Sales
+WHERE category = 'Clothing'
+AND TO_CHAR(sale_date,'YYYY-MM')='2022-11';
+
+Q3. Calculate total sales for each category
+
+SELECT
+category,
+SUM(total_sale) AS total_sales
+FROM Retail_Sales
+GROUP BY category;
+
+Q4. Find average customer age for Beauty category
+
+SELECT AVG(age)
+FROM Retail_Sales
+WHERE category='Beauty';
+
+Q5. Find transactions above 1000
+
+SELECT *
+FROM Retail_Sales
+WHERE total_sale > 1000;
+
+Q6. Total transactions by gender and category
+
+SELECT
+gender,
+category,
+COUNT(transactions_id) AS total_orders
+FROM Retail_Sales
+GROUP BY gender, category;
+
+Q7. Best-selling month in each year
+
+SELECT *
+FROM
+(
+SELECT
+EXTRACT(YEAR FROM sale_date) AS year,
+EXTRACT(MONTH FROM sale_date) AS month,
+AVG(total_sale) AS avg_sales,
+RANK() OVER(
+PARTITION BY EXTRACT(YEAR FROM sale_date)
+ORDER BY AVG(total_sale) DESC
+) AS rank
+FROM Retail_Sales
+GROUP BY 1,2
+) t
+WHERE rank = 1;
+
+Q8. Top 5 customers by revenue
+
+SELECT
+customer_id,
+SUM(total_sale) AS total_revenue
+FROM Retail_Sales
+GROUP BY customer_id
+ORDER BY total_revenue DESC
+LIMIT 5;
+
+
+
+Q9. Unique customers by category
+
+SELECT
+category,
+COUNT(DISTINCT customer_id) AS unique_customers
+FROM Retail_Sales
+GROUP BY category;
+
+Q10. Orders by sales shift
+
+SELECT
+CASE
+WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
+WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
+ELSE 'Evening'
+END AS shift,
+COUNT(*) AS total_orders
+FROM Retail_Sales
+GROUP BY shift;
+
+📈 Additional Business Insights
+Category Revenue Contribution
+
+SELECT
+category,
+SUM(total_sale) AS category_revenue,
+(
+SUM(total_sale)*100.0 /
+(SELECT SUM(total_sale) FROM Retail_Sales)
+) AS revenue_percentage
+FROM Retail_Sales
+GROUP BY category
+ORDER BY revenue_percentage DESC;
+
+Insight
+
+This analysis shows the percentage share of total business revenue contributed by each category.
+
+Gender Purchase Analysis
+
+SELECT
+gender,
+COUNT(transactions_id) AS total_purchases
+FROM Retail_Sales
+GROUP BY gender
+ORDER BY total_purchases DESC;
+
+Insight
+
+Helps identify the most active customer segment and supports targeted marketing strategies.
+
+GitHub
+📌 Key Skills Demonstrated
+SQL Query Writing
+Data Cleaning
+Aggregations
+Joins & Filtering
+Window Functions
+Ranking Functions
+Business KPI Analysis
+Revenue Analysis
+Customer Segmentation
+Retail Data Analytics
+
+
+
